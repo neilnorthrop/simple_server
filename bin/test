@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+function onDeath {
+  kill $SERVER
+}
+trap onDeath EXIT
+
+bin/server 2>/dev/null &
+SERVER=$!
+
+rake test

@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require './lib/server.rb'
+
+Server.new.run
