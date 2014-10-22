@@ -1,8 +1,11 @@
 require 'socket'
 require_relative 'request'
+require_relative 'serve_file'
 
 class Server
   attr_reader :server
+
+  WEB_ROOT = './public'
 
   CONTENT_TYPE_MAPPING = {
     'html' => 'text/html',
@@ -21,19 +24,57 @@ class Server
     ext = File.extname(path).split('.').last
     CONTENT_TYPE_MAPPING.fetch(ext, DEFAULT_CONTENT_TYPE)
   end
+  
+  def clean_path(path)
+    clean = []
+
+    parts = path.split("/")
+    parts.each do |part|
+      next if part.empty? || part == '.'
+      part == '..' ? clean.pop : clean << part
+    end 
+    File.join(WEB_ROOT, *clean)
+  end
 
   def run
     begin
       loop do
-        socket = server.accept
-        request = Request.parse(socket.gets)
-        STDERR.puts request
-        socket.puts "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\r\n" +
-                    "Content-Length: 12\r\n" +
-                    "Connection: close\r\n"
-        socket.print "\r\n"
-        socket.close
+        Thread.start(server.accept) do |socket|
+
+          request = Request.parse(socket.gets)
+          
+          STDERR.puts request
+          
+          path = clean_path(request.resource)
+          
+          path = File.join(path, 'index.html') if File.directory?(path)
+          
+          if File.exist?(path) && !File.directory?(path)
+            File.open(path, "rb") do |file|
+              socket.print "HTTP/1.1 200 OK\r\n" +
+                           "Content-Type: #{content_type(file)}\r\n" +
+                           "Content-Length: #{file.size}\r\n" +
+                           "Connection: close\r\n"
+              
+              socket.print "\r\n"
+              
+              IO.copy_stream(file, socket)
+            end
+          else
+            message = "File not found.\n"
+
+            socket.print "HTTP/1.1 404 Not Found\r\n" +
+                         "Content-Type: text/plain\r\n" +
+                         "Content-Length #{message.size}\r\n" +
+                         "Connection: close\r\n"
+            
+            socket.print "\r\n"
+            
+            socket.print message
+          end
+          
+          socket.close
+        end
       end
     rescue Interrupt
       puts "\nExiting...Thank you for using this super awesome server."
