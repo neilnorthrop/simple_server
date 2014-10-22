@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.authors     = ["Neil Northrop"]
   s.email       = 'nnorthrop@gmail.com'
   s.files       = ["lib/server.rb"]
-  s.homepage    = ''
-  s.license       = 'MIT'
+  s.homepage    = 'http://www.example.com'
+  s.license     = 'MIT'
 end

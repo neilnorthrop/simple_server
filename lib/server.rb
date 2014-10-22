@@ -1,6 +1,5 @@
 require 'socket'
 require_relative 'request'
-require_relative 'serve_file'
 
 class Server
   attr_reader :server
