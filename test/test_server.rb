@@ -1,4 +1,3 @@
-require 'socket'
 require 'net/http'
 require './lib/server'
 require 'minitest/autorun'
