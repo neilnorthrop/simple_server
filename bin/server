@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-require './lib/server.rb'
+require File.expand_path(File.join(File.dirname(__FILE__),'..','lib/server.rb'))
 
 Server.new.run

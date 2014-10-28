@@ -3,12 +3,8 @@ require './lib/server'
 require 'minitest/autorun'
 
 class TestServer < MiniTest::Test
-  def setup
-    @server = Server.new('localhost', rand(2346..50000))
-  end
-
-  def teardown
-    @server = nil
+  def server
+    Server.new('localhost', 2346)
   end
 
   def request(path)
@@ -28,14 +24,14 @@ class TestServer < MiniTest::Test
   end
 
   def test_requested_file_joins_a_resource
-    assert_equal @server.clean_path('/index.html'), './public/index.html'
+    assert_equal server.clean_path('/index.html'), './public/index.html'
   end
 
   def test_requested_file_removes_double_periods_from_resource_but_keeps_directories
-    assert_equal @server.clean_path('/../../../hello/index.html'), './public/hello/index.html'
+    assert_equal server.clean_path('/../../../hello/index.html'), './public/hello/index.html'
   end
 
   def test_requested_file_removes_double_periods_from_resource
-    assert_equal @server.clean_path('/../../hello/../index.html'), './public/index.html'
+    assert_equal server.clean_path('/../../hello/../index.html'), './public/index.html'
   end
 end
