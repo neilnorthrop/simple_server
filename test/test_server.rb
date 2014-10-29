@@ -1,10 +1,10 @@
 require 'net/http'
-require './lib/server'
+require './lib/simple_server'
 require 'minitest/autorun'
 
-class TestServer < MiniTest::Test
+class TestSimpleServer < MiniTest::Test
   def server
-    Server.new('localhost', 2346)
+    SimpleServer.new('localhost', 2346)
   end
 
   def request(path)

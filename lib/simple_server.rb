@@ -1,7 +1,7 @@
 require 'socket'
 require_relative 'request'
 
-class Server
+class SimpleServer
   attr_reader :server
 
   WEB_ROOT = './public'
