@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-require File.expand_path(File.join(File.dirname(__FILE__),'..','lib/server.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__),'..','lib/simple_server.rb'))
 
 SimpleServer.new.run
