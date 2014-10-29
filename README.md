@@ -1,6 +1,15 @@
 Super Awesome Server
 =====================================
 
+Two ways to install this gem.
+
+First way:
+``` gem install Simple_Server_Example ```
+
+Open a new terminal and type ``` server ``` then head to http://localhost:2345
+
+Second way:
+
 1. Download this git repo
 
 2. Inside the root of the repo, build the gem by typing:
