@@ -3,7 +3,7 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |s|
-  s.name             = 'Simple Server Example'
+  s.name             = 'Simple_Server_Example'
   s.version          = "0.0.1"
   s.files            = `git ls-files`.split($/)
   s.executables      = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
