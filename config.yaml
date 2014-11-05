@@ -1,0 +1,2 @@
+level: info
+output: 'log/server.log'

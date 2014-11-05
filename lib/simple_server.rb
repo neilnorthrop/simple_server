@@ -1,9 +1,9 @@
 require 'socket'
-require 'logger'
+require_relative 'logging'
 require_relative 'request'
 
 class SimpleServer
-  attr_reader :server
+  attr_reader :server, :level, :output
 
   WEB_ROOT = './public'
 
@@ -14,7 +14,7 @@ class SimpleServer
     'jpg'  => 'image/jpg'
   }
 
-  LOG = Logger.new($stdout)
+  LOG = Logging.setup
 
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
@@ -84,9 +84,9 @@ class SimpleServer
     begin
       loop do
         Thread.start(server.accept) do |socket|
-          LOG.info("Accepted socket: #{socket.inspect}")
+          LOG.debug("Accepted socket: #{socket.inspect}")
           request = Request.parse(socket.gets)
-          LOG.info("Incoming request: #{request.inspect}")
+          LOG.debug("Incoming request: #{request.inspect}")
           path = clean_path(request.resource)
           path = File.join(path, 'index.html') if File.directory?(path)
           LOG.debug("Requested path: #{path.inspect}")
