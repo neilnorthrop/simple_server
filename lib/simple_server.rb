@@ -1,4 +1,5 @@
 require 'socket'
+require 'logger'
 require_relative 'request'
 
 class SimpleServer
@@ -12,6 +13,8 @@ class SimpleServer
     'png'  => 'image/png',
     'jpg'  => 'image/jpg'
   }
+
+  LOG = Logger.new($stdout)
 
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
@@ -62,12 +65,17 @@ class SimpleServer
     end
   end
 
+  def server_info
+    puts "#{'-' * 30}\nWelcome to the Simple Server.\nPlease use CONTROL-C to exit.\n#{'-' * 30}\n\n"
+  end
+
   def run
+    server_info
     begin
       loop do
         Thread.start(server.accept) do |socket|
+          LOG.info("Accepted: #{socket}")
           request = Request.parse(socket.gets)          
-          STDERR.puts request          
           path = clean_path(request.resource)         
           path = File.join(path, 'index.html') if File.directory?(path)         
           request(path, socket)         
