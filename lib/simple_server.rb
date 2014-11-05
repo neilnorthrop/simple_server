@@ -45,6 +45,11 @@ class SimpleServer
                      "Content-Type: #{content_type(file)}\r\n" +
                      "Content-Length: #{file.size}\r\n" +
                      "Connection: close\r\n"
+
+        LOG.info     "HTTP/1.1 200 OK " +
+                     "Content-Type: #{content_type(file)} " +
+                     "Content-Length: #{file.size} " +
+                     "Connection: close"
         
         socket.print "\r\n"
         
@@ -57,6 +62,11 @@ class SimpleServer
                      "Content-Type: #{content_type(file)}\r\n" +
                      "Content-Length #{file.size}\r\n" +
                      "Connection: close\r\n"
+
+        LOG.info     "HTTP/1.1 404 Not Found " +
+                     "Content-Type: #{content_type(file)} " +
+                     "Content-Length #{file.size} " +
+                     "Connection: close"
         
         socket.print "\r\n"
         
@@ -74,11 +84,13 @@ class SimpleServer
     begin
       loop do
         Thread.start(server.accept) do |socket|
-          LOG.info("Accepted: #{socket}")
-          request = Request.parse(socket.gets)          
-          path = clean_path(request.resource)         
-          path = File.join(path, 'index.html') if File.directory?(path)         
-          request(path, socket)         
+          LOG.info("Accepted socket: #{socket.inspect}")
+          request = Request.parse(socket.gets)
+          LOG.info("Incoming request: #{request.inspect}")
+          path = clean_path(request.resource)
+          path = File.join(path, 'index.html') if File.directory?(path)
+          LOG.debug("Requested path: #{path.inspect}")
+          request(path, socket)
           socket.close
         end
       end
