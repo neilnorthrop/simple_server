@@ -29,7 +29,6 @@ class Response
         socket.print content(content_type(path), 
         										 file.size, 
         										 RESPONSE_CODE.rassoc('Not Found').join)
-        socket.print "\r\n"
         IO.copy_stream(file, socket)
       end
     end
