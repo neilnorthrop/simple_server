@@ -12,7 +12,18 @@ class Response
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
 	def self.build_response(path, socket)
-		request(path, socket)
+    if File.exist?(path) && !File.directory?(path)
+      File.open(path, "rb") do |file|
+        socket.print content(content_type(path), file.size, "200 OK")
+        IO.copy_stream(file, socket)
+      end
+    else
+      File.open('./public/404.html', "rb") do |file|
+        socket.print content(content_type(path), file.size, "404 Not Found")
+        socket.print "\r\n"
+        IO.copy_stream(file, socket)
+      end
+    end
 	end
 
   def self.content_type(path)
@@ -21,24 +32,12 @@ class Response
   end
 
   def self.request(path, socket)
-    if File.exist?(path) && !File.directory?(path)
-      File.open(path, "rb") do |file|
-        socket.print "HTTP/1.1 200 OK\r\n" +
-                     "Content-Type: #{content_type(file)}\r\n" +
-                     "Content-Length: #{file.size}\r\n" +
-                     "Connection: close\r\n"
-        socket.print "\r\n"
-        IO.copy_stream(file, socket)
-      end
-    else
-      File.open('./public/404.html', "rb") do |file|
-        socket.print "HTTP/1.1 404 Not Found\r\n" +
-                     "Content-Type: #{content_type(file)}\r\n" +
-                     "Content-Length #{file.size}\r\n" +
-                     "Connection: close\r\n"
-        socket.print "\r\n"
-        IO.copy_stream(file, socket)
-      end
-    end
+  end
+
+  def self.content(type, size, code)
+  	"HTTP/1.1 #{code}\r\n" + 
+		"Content-Type: #{type}\r\n" +
+		"Content-Length: #{size}\r\n" +
+		"Connection: close\r\n\r\n"
   end
 end
