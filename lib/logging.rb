@@ -1,13 +1,16 @@
 require 'logger'
 require 'yaml'
 
-module Logging
-	extend self
-	def setup
-		Logger.new(load['output'].nil? ? $stdout : load['output'])
+class Logging
+	def self.setup
+		log = Logger.new(output.nil? ? $stdout : output)
 	end
 
-	def load
-		YAML.load(File.open('config.yaml'))
+	def self.output
+		YAML.load(File.open('config.yaml'))['output']
+	end
+
+	def self.set_level
+		YAML.load(File.open('config.yaml'))['level']
 	end
 end

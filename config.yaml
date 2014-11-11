@@ -3,4 +3,4 @@
 level: info
 # The commented output line will default output to the stdout.
 # Uncomment the line and edit where the logs output to.
-# output: 'log/server.log'
+output: 'log/server.log'
