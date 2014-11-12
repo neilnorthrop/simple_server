@@ -37,12 +37,21 @@ class SimpleServer
       loop do
         Thread.start(server.accept) do |socket|
           LOG.debug("Accepted socket: #{socket.inspect}")
+          
           request = Request.parse(socket.gets)
           LOG.debug("Incoming request: #{request.inspect}")
+          
           path = clean_path(request.resource)
           path = File.join(path, 'index.html') if File.directory?(path)
           LOG.debug("Requested path: #{path.inspect}")
-          Response.build_response(path, socket)
+          
+          response = Response.build(path)
+          socket.print response.header
+          File.open(response.body, "rb") do |file|
+            IO.copy_stream(file, socket)
+          end
+          LOG.info(response.header)
+          
           socket.close
         end
       end

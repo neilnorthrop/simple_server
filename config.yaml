@@ -1,7 +1,7 @@
 # The only two levels used so far are debug and info.
 # Will need to impliment warn, error, and fatal.
-# level: 0 #debug
-level: 1 #info
+level: 0 #debug
+# level: 1 #info
 # level: 2 #warn
 # level: 3 #error
 # level: 4 #fatal

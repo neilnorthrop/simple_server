@@ -1,6 +1,12 @@
 require 'socket'
 
 class Response
+  attr_reader :header, :body
+
+  def initialize(header, body)
+    @header = header
+    @body = body
+  end
 
 	RESPONSE_CODE = {
 		'200' => 'OK',
@@ -18,11 +24,19 @@ class Response
 
   NOT_FOUND = './public/404.html'
 
-	def self.build_response(path, socket)
+	def self.build(path)
     if File.exist?(path) && !File.directory?(path)
-      serve_response(path, socket, RESPONSE_CODE.rassoc('OK'))
+      body, body_size = build_body(path)
+      header = build_header(RESPONSE_CODE.rassoc('OK').join,
+                           content_type(path),
+                           body_size)
+      Response.new(header, body)
     else
-      serve_response(NOT_FOUND, socket, RESPONSE_CODE.rassoc('Not Found'))
+      body, body_size = build_body(NOT_FOUND)
+      header = build_header(RESPONSE_CODE.rassoc('Not Found').join,
+                           content_type(path),
+                           body_size)
+      Response.new(header, body)
     end
 	end
 
@@ -31,19 +45,16 @@ class Response
     CONTENT_TYPE_MAPPING.fetch(ext, DEFAULT_CONTENT_TYPE)
   end
 
-  def self.content(code, type, size)
-  	"HTTP/1.1 #{code}\r\n" + 
+  def self.build_header(code, type, size)
+    "HTTP/1.1 #{code}\r\n" + 
 		"Content-Type: #{type}\r\n" +
 		"Content-Length: #{size}\r\n" +
 		"Connection: close\r\n\r\n"
   end
 
-  def self.serve_response(path, socket, code)
+  def self.build_body(path)
     File.open(path, "rb") do |file|
-      socket.print content(code.join,
-                           content_type(path),
-                           file.size)
-      IO.copy_stream(file, socket)
+      return file, file.size
     end
   end
 end
