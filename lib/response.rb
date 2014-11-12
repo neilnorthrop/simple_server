@@ -16,21 +16,13 @@ class Response
 
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
+  NOT_FOUND = './public/404.html'
+
 	def self.build_response(path, socket)
     if File.exist?(path) && !File.directory?(path)
-      File.open(path, "rb") do |file|
-        socket.print content(content_type(path),
-        										 file.size, 
-        										 RESPONSE_CODE.rassoc('OK').join)
-        IO.copy_stream(file, socket)
-      end
+      serve_response(path, socket, RESPONSE_CODE.rassoc('OK'))
     else
-      File.open('./public/404.html', "rb") do |file|
-        socket.print content(content_type(path), 
-        										 file.size, 
-        										 RESPONSE_CODE.rassoc('Not Found').join)
-        IO.copy_stream(file, socket)
-      end
+      serve_response(NOT_FOUND, socket, RESPONSE_CODE.rassoc('Not Found'))
     end
 	end
 
@@ -39,10 +31,19 @@ class Response
     CONTENT_TYPE_MAPPING.fetch(ext, DEFAULT_CONTENT_TYPE)
   end
 
-  def self.content(type, size, code)
+  def self.content(code, type, size)
   	"HTTP/1.1 #{code}\r\n" + 
 		"Content-Type: #{type}\r\n" +
 		"Content-Length: #{size}\r\n" +
 		"Connection: close\r\n\r\n"
+  end
+
+  def self.serve_response(path, socket, code)
+    File.open(path, "rb") do |file|
+      socket.print content(code.join,
+                           content_type(path),
+                           file.size)
+      IO.copy_stream(file, socket)
+    end
   end
 end
