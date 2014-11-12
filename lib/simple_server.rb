@@ -9,9 +9,11 @@ class SimpleServer
   WEB_ROOT = './public'
 
   LOG = Logging.setup
+  LOG.debug("Logging is set up.")
 
   def initialize(host='localhost', port=2345)
     @server = TCPServer.new(host, port)
+    LOG.debug("Server is set up.")
   end
   
   def clean_path(path)
