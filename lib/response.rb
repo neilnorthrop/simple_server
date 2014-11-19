@@ -58,9 +58,7 @@ class Response
     end
   end
 
-  def file_stream(output)
-    File.open(self.body, "rb") do |file|
-      IO.copy_stream(file, output)
-    end
+  def stream
+    File.read(self.body)
   end
 end

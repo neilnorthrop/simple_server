@@ -47,7 +47,7 @@ class SimpleServer
           
           response = Response.build(path)
           socket.print response.header
-          response.file_stream(socket)
+          socket.print response.stream
           LOG.info(response.header)
           
           socket.close
