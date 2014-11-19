@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |s|
   s.name             = 'Simple_Server_Example'
-  s.version          = "1.0.0"
+  s.version          = "1.1.0"
   s.files            = `git ls-files`.split($/)
   s.executables      = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.test_files       = s.files.grep(%r{^(test|spec|features)/})
