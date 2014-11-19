@@ -47,9 +47,7 @@ class SimpleServer
           
           response = Response.build(path)
           socket.print response.header
-          File.open(response.body, "rb") do |file|
-            IO.copy_stream(file, socket)
-          end
+          response.file_stream(socket)
           LOG.info(response.header)
           
           socket.close

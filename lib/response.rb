@@ -57,4 +57,10 @@ class Response
       return file, file.size
     end
   end
+
+  def file_stream(output)
+    File.open(self.body, "rb") do |file|
+      IO.copy_stream(file, output)
+    end
+  end
 end
