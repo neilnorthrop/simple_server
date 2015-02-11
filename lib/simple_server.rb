@@ -4,7 +4,7 @@ require_relative 'request'
 require_relative 'response'
 
 class SimpleServer
-  attr_reader :server, :level, :output
+  attr_reader :server, :level, :output, :host, :port
 
   WEB_ROOT = './public'
 
@@ -12,6 +12,8 @@ class SimpleServer
   LOG.debug("Logging is set up.")
 
   def initialize(host='localhost', port=2345)
+    @host = host
+    @port = port
     @server = TCPServer.new(host, port)
     LOG.debug("Server is set up.")
   end
@@ -28,7 +30,7 @@ class SimpleServer
   end
 
   def server_info
-    puts "#{'-' * 30}\nWelcome to the Simple Server.\nPlease use CONTROL-C to exit.\n#{'-' * 30}\n\n"
+    puts "#{'-' * 30}\nWelcome to the Simple Server.\nIt is running on http://#{host}#{(":" + port.to_s) if port}\nPlease use CONTROL-C to exit.\n#{'-' * 30}\n\n"
   end
 
   def run

@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.join(File.dirname(__FILE__),'..','lib/simple_server.rb'))
 
-SimpleServer.new.run
+args = ARGV
+
+if args.empty?
+	SimpleServer.new.run
+else
+	SimpleServer.new(ARGV[0], ARGV[1]).run
+end
