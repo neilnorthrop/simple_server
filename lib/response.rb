@@ -27,13 +27,13 @@ class Response
 	def self.build(path)
     if File.exist?(path) && !File.directory?(path)
       body, body_size = build_body(path)
-      header = build_header(RESPONSE_CODE.rassoc('OK').join,
+      header = build_header(RESPONSE_CODE.rassoc('OK').join("/"),
                            content_type(path),
                            body_size)
       Response.new(header, body)
     else
       body, body_size = build_body(NOT_FOUND)
-      header = build_header(RESPONSE_CODE.rassoc('Not Found').join,
+      header = build_header(RESPONSE_CODE.rassoc('Not Found').join("/"),
                            content_type(path),
                            body_size)
       Response.new(header, body)

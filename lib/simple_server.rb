@@ -6,6 +6,7 @@ require_relative 'response'
 class SimpleServer
   attr_reader :server, :level, :output, :host, :port
 
+  READ_CHUNK = 1024 * 4
   WEB_ROOT = './public'
 
   LOG = Logging.setup
@@ -40,7 +41,15 @@ class SimpleServer
         Thread.start(server.accept) do |socket|
           LOG.debug("Accepted socket: #{socket.inspect}")
           
-          request = Request.parse(socket.gets)
+        begin
+          data = socket.readpartial(READ_CHUNK)
+        rescue EOFError
+          break
+        end
+          # LOG.debug("INCOMING FROM SOCKET: \n#{data}")
+          logging_header(data)
+          
+          request = Request.parse(data)
           LOG.debug("Incoming request: #{request.inspect}")
           
           path = clean_path(request.resource)
@@ -50,13 +59,19 @@ class SimpleServer
           response = Response.build(path)
           socket.print response.header
           socket.print response.stream
-          LOG.info(response.header)
-          
+          logging_header(response.header)
           socket.close
         end
       end
     rescue Interrupt
       puts "\nExiting...Thank you for using this super awesome server."
+    end
+  end
+
+  def logging_header(header)
+    header = header.split("\r\n")
+    header.each do |line|
+      LOG.info(line)
     end
   end
 end
