@@ -1,12 +1,12 @@
-# The only two levels used so far are debug and info.
-# Will need to impliment warn, error, and fatal.
-# level: 0 #debug
-level: 1 #info
+# Toggle the level of commentting you want.
+level: 0 #debug
+# level: 1 #info
 # level: 2 #warn
 # level: 3 #error
 # level: 4 #fatal
 # level: 5 #unknown
 
 # The commented output line will default output to the stdout.
-# Uncomment the line and edit where the logs output to.
-output: 'log/server.log'
+# Uncomment the line below and edit where the logs output to.
+
+# output: 'log/server.log'

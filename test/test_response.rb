@@ -19,6 +19,14 @@ class TestResponse < MiniTest::Test
   end
 
   def test_requested_file_joins_a_resource
-    assert_equal server.clean_path('/index.html'), './public/index.html'
+    assert_equal Response.clean_path('/index.html'), './public/index.html'
+  end
+
+  def test_requested_file_removes_double_periods_from_resource_but_keeps_directories
+    assert_equal Response.clean_path('/../../../hello/index.html'), './public/hello/index.html'
+  end
+
+  def test_requested_file_removes_double_periods_from_resource
+    assert_equal Response.clean_path('/../../hello/../index.html'), './public/index.html'
   end
 end

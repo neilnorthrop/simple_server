@@ -17,14 +17,27 @@ class Response
     'html' => 'text/html',
     'txt'  => 'text/plain',
     'png'  => 'image/png',
-    'jpg'  => 'image/jpg'
+    'jpg'  => 'image/jpg',
+    'haml' => 'text/html'
   }
 
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
   NOT_FOUND = './public/404.html'
+  WEB_ROOT = './public'
 
-	def self.build(path)
+	def self.build(request)
+    case 
+    when request.method == "GET"
+      get(request)
+    when request.method == "POST"
+      post(request)
+    end
+	end
+
+  def self.get(request)
+    path = clean_path(request.resource)
+    path = File.join(path, 'index.html') if File.directory?(path)
     if File.exist?(path) && !File.directory?(path)
       body, body_size = build_body(path)
       header = build_header(RESPONSE_CODE.rassoc('OK').join("/"),
@@ -38,7 +51,36 @@ class Response
                            body_size)
       Response.new(header, body)
     end
-	end
+  end
+
+  def self.post(request)
+    path = clean_path(request.resource)
+    path = File.join(path, 'index.html') if File.directory?(path)
+    if File.exist?(path) && !File.directory?(path)
+      body, body_size = build_body(path)
+      header = build_header(RESPONSE_CODE.rassoc('OK').join("/"),
+                           content_type(path),
+                           body_size)
+      Response.new(header, body)
+    else
+      body, body_size = build_body(NOT_FOUND)
+      header = build_header(RESPONSE_CODE.rassoc('Not Found').join("/"),
+                           content_type(path),
+                           body_size)
+      Response.new(header, body)
+    end
+  end
+  
+  def self.clean_path(path)
+    clean = []
+
+    parts = path.split("/")
+    parts.each do |part|
+      next if part.empty? || part == '.'
+      part == '..' ? clean.pop : clean << part
+    end 
+    File.join(WEB_ROOT, *clean)
+  end
 
   def self.content_type(path)
     ext = File.extname(path).split('.').last

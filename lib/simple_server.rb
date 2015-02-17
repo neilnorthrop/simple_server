@@ -7,7 +7,6 @@ class SimpleServer
   attr_reader :server, :level, :output, :host, :port
 
   READ_CHUNK = 1024 * 4
-  WEB_ROOT = './public'
 
   LOG = Logging.setup
   LOG.debug("Logging is set up.")
@@ -17,17 +16,6 @@ class SimpleServer
     @port = port
     @server = TCPServer.new(host, port)
     LOG.debug("Server is set up.")
-  end
-  
-  def clean_path(path)
-    clean = []
-
-    parts = path.split("/")
-    parts.each do |part|
-      next if part.empty? || part == '.'
-      part == '..' ? clean.pop : clean << part
-    end 
-    File.join(WEB_ROOT, *clean)
   end
 
   def server_info
@@ -39,27 +27,22 @@ class SimpleServer
     begin
       loop do
         Thread.start(server.accept) do |socket|
-          LOG.debug("Accepted socket: #{socket.inspect}")
+          LOG.debug("Accepted socket: #{socket.inspect}\r\n")
           
         begin
           data = socket.readpartial(READ_CHUNK)
         rescue EOFError
           break
         end
-          # LOG.debug("INCOMING FROM SOCKET: \n#{data}")
-          logging_header(data)
+          logging_string(data)
           
           request = Request.parse(data)
-          LOG.debug("Incoming request: #{request.inspect}")
-          
-          path = clean_path(request.resource)
-          path = File.join(path, 'index.html') if File.directory?(path)
-          LOG.debug("Requested path: #{path.inspect}")
-          
-          response = Response.build(path)
+          LOG.debug("Incoming request: #{request.inspect}\r\n")
+          response = Response.build(request)
+          LOG.debug("Built response: #{response.inspect}\r\n")
           socket.print response.header
           socket.print response.stream
-          logging_header(response.header)
+          logging_string(response.header)
           socket.close
         end
       end
@@ -68,9 +51,9 @@ class SimpleServer
     end
   end
 
-  def logging_header(header)
-    header = header.split("\r\n")
-    header.each do |line|
+  def logging_string(string)
+    string = string.split("\r\n")
+    string.each do |line|
       LOG.info(line)
     end
   end
