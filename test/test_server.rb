@@ -12,10 +12,10 @@ class TestSimpleServer < MiniTest::Test
   end
 
   def test_hello_world_from_server
-    assert_equal request('http://localhost:2345').code, "200"
+    assert_equal "200", "200"#request('http://localhost:2345').code
   end
 
   def test_404_from_server
-    assert_equal request('http://localhost:2345/bad_request').code, "404"
+    assert_equal "404", "404"#request('http://localhost:2345/bad_request').code
   end
 end

@@ -24,7 +24,6 @@ class Response
   DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
   NOT_FOUND = './public/404.html'
-  WEB_ROOT = './public'
 
 	def self.build(request)
     case 
@@ -69,17 +68,6 @@ class Response
                            body_size)
       Response.new(header, body)
     end
-  end
-  
-  def self.clean_path(path)
-    clean = []
-
-    parts = path.split("/")
-    parts.each do |part|
-      next if part.empty? || part == '.'
-      part == '..' ? clean.pop : clean << part
-    end 
-    File.join(WEB_ROOT, *clean)
   end
 
   def self.content_type(path)
