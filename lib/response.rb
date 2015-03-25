@@ -26,35 +26,12 @@ class Response
   NOT_FOUND = './public/404.html'
 
 	def self.build(request)
-    case 
-    when request.method == "GET"
-      get(request)
-    when request.method == "POST"
-      post(request)
-    end
+    response(request)
 	end
 
-  def self.get(request)
-    path = clean_path(request.resource)
-    path = File.join(path, 'index.html') if File.directory?(path)
-    if File.exist?(path) && !File.directory?(path)
-      body, body_size = build_body(path)
-      header = build_header(RESPONSE_CODE.rassoc('OK').join("/"),
-                           content_type(path),
-                           body_size)
-      Response.new(header, body)
-    else
-      body, body_size = build_body(NOT_FOUND)
-      header = build_header(RESPONSE_CODE.rassoc('Not Found').join("/"),
-                           content_type(path),
-                           body_size)
-      Response.new(header, body)
-    end
-  end
-
-  def self.post(request)
-    path = clean_path(request.resource)
-    path = File.join(path, 'index.html') if File.directory?(path)
+  def self.response(request)
+    path = request.resource
+    path = File.join(request.resource, 'index.html') if File.directory?(request.resource)
     if File.exist?(path) && !File.directory?(path)
       body, body_size = build_body(path)
       header = build_header(RESPONSE_CODE.rassoc('OK').join("/"),
