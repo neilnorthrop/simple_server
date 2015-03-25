@@ -2,6 +2,7 @@ require './lib/request'
 require 'minitest/autorun'
 
 class TestRequest < MiniTest::Test
+  
   def test_that_request_parser_returns_method
     match = Request.parse('GET /index.html HTTP/1.1')
     assert_equal match.method, 'GET' 
@@ -27,4 +28,5 @@ class TestRequest < MiniTest::Test
   def test_requested_file_removes_double_periods_from_resource
     assert_equal './public/index.html', Request.clean_path('/../../hello/../index.html')
   end
+  
 end

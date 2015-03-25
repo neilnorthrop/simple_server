@@ -57,4 +57,5 @@ class SimpleServer
       LOG.info(line)
     end
   end
+  
 end

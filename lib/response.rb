@@ -8,10 +8,10 @@ class Response
     @body = body
   end
 
-	RESPONSE_CODE = {
-		'200' => 'OK',
-		'404' => 'Not Found'
-	}
+  RESPONSE_CODE = {
+    '200' => 'OK',
+    '404' => 'Not Found'
+  }
 
   CONTENT_TYPE_MAPPING = {
     'html' => 'text/html',
@@ -25,9 +25,9 @@ class Response
 
   NOT_FOUND = './public/404.html'
 
-	def self.build(request)
+  def self.build(request)
     response(request)
-	end
+  end
 
   def self.response(request)
     path = request.resource
@@ -54,9 +54,9 @@ class Response
 
   def self.build_header(code, type, size)
     "HTTP/1.1 #{code}\r\n" + 
-		"Content-Type: #{type}\r\n" +
-		"Content-Length: #{size}\r\n" +
-		"Connection: close\r\n\r\n"
+    "Content-Type: #{type}\r\n" +
+    "Content-Length: #{size}\r\n" +
+    "Connection: close\r\n\r\n"
   end
 
   def self.build_body(path)
@@ -68,4 +68,5 @@ class Response
   def stream
     File.read(self.body)
   end
+  
 end
