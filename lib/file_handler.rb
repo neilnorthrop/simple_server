@@ -26,7 +26,7 @@ class FileHandler
   DEFAULT_INDEX = 'index.html'
   NOT_FOUND = './public/404.html'
 
-  def initialize(path)
+  def initialize(path="")
     @path          = path
     @body          = ""
     @response_code = ""
@@ -46,12 +46,12 @@ class FileHandler
     CONTENT_TYPE_MAPPING.fetch(ext, DEFAULT_CONTENT_TYPE)
   end
 
-  def handle_file
-    @path = File.join(@path, DEFAULT_INDEX) if File.directory?(@path)
-    if File.exist?(@path) && !File.directory?(@path)
-      build_body(@path)
+  def handle_file(path)
+    path = File.join(path, DEFAULT_INDEX) if File.directory?(path)
+    if File.exist?(path) && !File.directory?(path)
+      build_body(path)
       @response_code = RESPONSE_CODE.rassoc('OK').join("/")
-      @content_type = get_content_type(@path)
+      @content_type = get_content_type(path)
     else
       @response_code = RESPONSE_CODE.rassoc('Not Found').join("/")
     end

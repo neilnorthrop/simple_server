@@ -39,7 +39,7 @@ class SimpleServer
 
           request = Request.parse(data)
           file_handler = FileHandler.new(request.resource)
-          file_handler.handle_file
+          file_handler.handle_file(file_handler.path)
           header = build_header(file_handler.response_code,
                                 file_handler.content_type,
                                 file_handler.file_size)
