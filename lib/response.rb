@@ -3,14 +3,16 @@ require 'socket'
 class Response
   attr_reader :header, :body
 
-  def initialize(header, body)
-    @header = header
-    @body = body
-  end
-
   RESPONSE_CODE = {
+    '100' => 'Continue',
     '200' => 'OK',
-    '404' => 'Not Found'
+    '201' => 'Created',
+    '202' => 'Accepted',
+    '400' => 'Bad Request',
+    '403' => 'Forbidden',
+    '404' => 'Not Found',
+    '500' => 'Internal Server Error',
+    '502' => 'Bad Gateway'
   }
 
   CONTENT_TYPE_MAPPING = {
@@ -25,11 +27,12 @@ class Response
 
   NOT_FOUND = './public/404.html'
 
-  def self.build(request)
-    response(request)
+  def initialize(header, body)
+    @header = header
+    @body = body
   end
 
-  def self.response(request)
+  def self.build(request)
     path = request.resource
     path = File.join(request.resource, 'index.html') if File.directory?(request.resource)
     if File.exist?(path) && !File.directory?(path)
