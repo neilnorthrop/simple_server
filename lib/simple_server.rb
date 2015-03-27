@@ -40,11 +40,8 @@ class SimpleServer
           request = Request.parse(data)
           file_handler = FileHandler.new(request.resource)
           file_handler.handle_file(file_handler.path)
-          header = build_header(file_handler.response_code,
-                                file_handler.content_type,
-                                file_handler.file_size)
           LOG.debug("Incoming request: #{request.inspect}\r\n")
-          response = Response.build(header, file_handler.body)
+          response = Response.build_header(file_handler)
           LOG.debug("Built response: #{response.inspect}\r\n")
           socket.print response.header
           socket.print response.stream
@@ -63,13 +60,6 @@ class SimpleServer
     string.each do |line|
       LOG.info(line)
     end
-  end
-
-  def build_header(code, type, size)
-    "HTTP/1.1 #{code}\r\n" +
-    "Content-Type: #{type}\r\n" +
-    "Content-Length: #{size}\r\n" +
-    "Connection: close\r\n\r\n"
   end
 
 end
