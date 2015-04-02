@@ -41,7 +41,6 @@ class SimpleServer
           # LOG.debug("Built response: #{response.inspect}\r\n")
 
           response = request.build(data)
-          socket.print response.header
           socket.print response.stream
           logging_string(response.header)
 
