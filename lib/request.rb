@@ -23,7 +23,7 @@ class Request
       return ""
     end
   end
-  
+
   def self.clean_path(path)
     clean = []
 
@@ -31,8 +31,8 @@ class Request
     parts.each do |part|
       next if part.empty? || part == '.'
       part == '..' ? clean.pop : clean << part
-    end 
+    end
     File.join(WEB_ROOT, *clean)
   end
-  
+
 end
