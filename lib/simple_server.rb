@@ -5,7 +5,7 @@ require_relative 'response'
 require_relative 'file_handler'
 
 class SimpleServer
-  attr_reader :server, :level, :output, :host, :port
+  attr_reader :server, :level, :output, :host, :port, :request
 
   READ_CHUNK = 1024 * 4
 
@@ -13,9 +13,10 @@ class SimpleServer
   LOG.debug("Logging is set up.")
 
   def initialize(host='localhost', port=2345)
-    @host = host
-    @port = port
-    @server = TCPServer.new(host, port)
+    @host    = host
+    @port    = port
+    @server  = TCPServer.new(host, port)
+    @request = Request.new
     LOG.debug("Server is set up.")
   end
 
@@ -36,13 +37,10 @@ class SimpleServer
           break
         end
           logging_string(data)
+          # LOG.debug("Incoming request: #{request.inspect}\r\n")
+          # LOG.debug("Built response: #{response.inspect}\r\n")
 
-          request = Request.parse(data)
-          file_handler = FileHandler.new(request.resource)
-          file_handler.handle_file(file_handler.path)
-          LOG.debug("Incoming request: #{request.inspect}\r\n")
-          response = Response.build_header(file_handler)
-          LOG.debug("Built response: #{response.inspect}\r\n")
+          response = request.build(data)
           socket.print response.header
           socket.print response.stream
           logging_string(response.header)
