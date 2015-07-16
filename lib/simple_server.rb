@@ -1,8 +1,6 @@
 require 'socket'
 require_relative 'logging'
 require_relative 'request'
-require_relative 'response'
-require_relative 'file_handler'
 
 class SimpleServer
   attr_reader :server, :level, :output, :host, :port, :request
