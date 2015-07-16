@@ -2,16 +2,7 @@ require_relative 'file_handler'
 require_relative 'response'
 
 class Request
-  attr_reader :method, :resource, :version, :body
-
   WEB_ROOT = './public'
-
-  def initialize
-    @method = method
-    @resource = resource
-    @version = version
-    @body = body
-  end
 
   def build(string)
     request = parse(string)
